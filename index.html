@@ -1069,5 +1069,73 @@ function generateGuestLink(){
 </script>
 
 <div class="toast" id="toast"></div>
+
+<script>
+// ===== Correção GitHub Pages: convite individual + acompanhantes =====
+function taPublicCompanionNames(rec){
+  const raw=rec&&Array.isArray(rec.companionNames)?rec.companionNames:[];
+  return raw.map(x=>String(x||'').trim()).filter(Boolean);
+}
+async function loadCloudInvite(){
+  if(!inviteId||!cloudApiUrl)return false;
+  const personal=document.getElementById('rsvpPersonal'),btn=document.getElementById('rsvpMainButton');
+  try{
+    if(personal&&guestName==='Convidado(a)')personal.textContent='Carregando seu convite...';
+    if(btn&&guestName==='Convidado(a)'){btn.disabled=true;btn.textContent='Carregando...';btn.style.display='inline-block'}
+    const data=await cloudGet('invite',{invite:inviteId});
+    if(!data||!data.guest)throw new Error('Convite não encontrado.');
+    cloudReady=true;
+    guestName=data.guest.name||guestName;
+    const normalized={...data.guest,companionNames:taPublicCompanionNames(data.guest)};
+    document.getElementById('guest').textContent=guestName;
+    document.getElementById('mainGuest').textContent=guestName;
+    const found=guestRegistry.find(g=>String(g.id)===String(normalized.id));
+    if(found)Object.assign(found,normalized);else guestRegistry.push(normalized);
+    localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
+    if(data.rsvp)localStorage.setItem('rsvp_'+guestName,JSON.stringify(data.rsvp));
+    syncCompanionOptions();renderPersonalInvite();renderCurrentRSVPStatus();
+    if(btn)btn.disabled=false;
+    return true;
+  }catch(e){
+    console.warn(e);
+    if(personal)personal.textContent='Este convite ainda não foi sincronizado pelos noivos.';
+    if(btn){btn.style.display='inline-block';btn.disabled=false;btn.textContent='Tentar carregar convite'}
+    return false;
+  }
+}
+async function openRSVP(){
+  if(inviteId){
+    const loaded=currentInviteRecord()||await loadCloudInvite();
+    if(!loaded||guestName==='Convidado(a)'){
+      alert('Este convite ainda não está disponível online. Peça aos noivos para sincronizar o cadastro e enviar um novo link.');
+      return;
+    }
+  }
+  const existing=responseFor(guestName);
+  if(existing&&!window.__TA_ADMIN_MODE){showToast('Sua resposta já foi enviada aos noivos.');return}
+  syncCompanionOptions();
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('form').style.display='block';
+  document.getElementById('success').style.display='none';
+  attending=null;
+  document.getElementById('companions').style.display='none';
+  document.getElementById('yes').classList.remove('selected');
+  document.getElementById('no').classList.remove('selected');
+}
+async function cloudSubmitRSVP(record){
+  if(!record.guestId){showToast('Este convite não tem identificação.');return false}
+  if(!cloudApiUrl){showToast('Conexão online indisponível.');return false}
+  try{
+    // Confere o convite antes de gravar, evitando a mensagem genérica de falha.
+    const invite=await cloudGet('invite',{invite:record.guestId});
+    if(!invite||!invite.guest)throw new Error('Este convite ainda não foi sincronizado pelos noivos.');
+    const data=await cloudGet('rsvp',{guestId:record.guestId,attending:String(record.attending===true),companions:Number(record.companions)||0,companionNames:JSON.stringify(record.companionNames||[])});
+    if(!data||data.ok===false)throw new Error((data&&data.error)||'Não foi possível registrar a resposta.');
+    cloudReady=true;showToast('Confirmação enviada aos noivos.');return true;
+  }catch(e){console.error(e);showToast(e.message||'Não foi possível enviar. Tente novamente.');return false}
+}
+setTimeout(()=>{if(inviteId)loadCloudInvite()},150);
+
+</script>
 </body>
 </html>
