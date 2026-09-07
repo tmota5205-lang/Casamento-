@@ -1256,5 +1256,175 @@ async function pushLocalToCloud(){
 })();
 
 </script>
+
+<script>
+// ===== V5.0 — gravação confiável via JSONP GET (GitHub Pages / Safari) =====
+async function taGuestUpsert(g){
+  if(!g||!g.id)throw new Error('Convite sem identificação.');
+  if(!cloudApiUrl)cloudApiUrl=DEFAULT_CLOUD_API_URL;
+  const key=await ensureCloudAdminKey();
+  if(!key)throw new Error('Informe a chave administrativa do painel.');
+  cloudAdminKey=key;
+  localStorage.setItem(CLOUD_URL_KEY,cloudApiUrl);
+  localStorage.setItem('ta_anderson_cloud_admin_key',key);
+  sessionStorage.setItem('ta_anderson_cloud_admin_key',key);
+  const data=await cloudGet('guestUpsert',{
+    key:key,
+    guestId:g.id,
+    name:g.name,
+    maxCompanions:Number(g.maxCompanions)||0,
+    companionNames:JSON.stringify(companionNamesForGuest(g)),
+    createdAt:g.createdAt||''
+  });
+  cloudReady=true;
+  if(data&&data.guest){
+    const i=guestRegistry.findIndex(x=>String(x.id)===String(g.id));
+    if(i>=0)guestRegistry[i]={...guestRegistry[i],...data.guest};
+    localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
+  }
+  return data&&data.guest?data.guest:g;
+}
+
+async function taEnsureGuestOnline(g){
+  if(!g||!g.id)throw new Error('Convite sem identificação.');
+  try{
+    const current=await cloudGet('invite',{invite:g.id});
+    if(current&&current.guest&&taSameGuestData(g,current.guest))return current.guest;
+  }catch(_){ }
+  await taGuestUpsert(g);
+  await new Promise(r=>setTimeout(r,350));
+  const checked=await cloudGet('invite',{invite:g.id});
+  if(!checked||!checked.guest)throw new Error('O convite ainda não apareceu no Google.');
+  return checked.guest;
+}
+
+async function deleteGuestInvite(g){
+  if(!g||!window.__TA_ADMIN_MODE)return;
+  if(!confirm('Excluir definitivamente o convite de '+g.name+'?'))return;
+  try{
+    const key=await ensureCloudAdminKey();
+    if(!key)throw new Error('Informe a chave administrativa do painel.');
+    await cloudGet('guestDelete',{key:key,guestId:g.id});
+    guestRegistry=guestRegistry.filter(x=>String(x.id)!==String(g.id));
+    localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
+    localStorage.removeItem('rsvp_'+g.name);
+    renderGuestManager();renderRSVPAdmin();renderCurrentRSVPStatus();
+    showToast('Convite excluído com sucesso.');
+  }catch(e){
+    console.error(e);
+    alert('Não foi possível excluir o convite.\n\n'+e.message);
+  }
+}
+
+function editGuestInline(row,g){
+  const oldName=g.name;const existingNames=companionNamesForGuest(g).join(', ');
+  row.innerHTML='<div class="gm-edit"><input class="edit-name" maxlength="80" value="'+safeText(g.name)+'"><select class="edit-max">'+[0,1,2,3,4].map(n=>'<option value="'+n+'" '+(Number(g.maxCompanions||0)===n?'selected':'')+'>'+n+' acompanhante(s)</option>').join('')+'</select><input class="edit-companion-names" maxlength="240" placeholder="Nomes dos acompanhantes separados por vírgula" value="'+safeText(existingNames)+'"><button class="gm-btn save">Salvar</button></div>';
+  row.querySelector('.save').onclick=async()=>{
+    const name=row.querySelector('.edit-name').value.trim(),maxCompanions=Number(row.querySelector('.edit-max').value);
+    const companionNames=row.querySelector('.edit-companion-names').value.split(',').map(x=>x.trim()).filter(Boolean).slice(0,maxCompanions);
+    if(!name)return;
+    if(guestRegistry.some(x=>x.id!==g.id&&x.name.toLowerCase()===name.toLowerCase())){showToast('Já existe um convidado com esse nome.');return}
+    g.name=name;g.maxCompanions=maxCompanions;g.companionNames=companionNames;
+    localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));renderGuestManager();
+    try{
+      await taGuestUpsert(g);
+      const resp=responseFor(oldName);if(resp&&oldName!==name){localStorage.removeItem('rsvp_'+oldName);resp.guest=name;localStorage.setItem('rsvp_'+name,JSON.stringify(resp))}
+      renderGuestManager();renderRSVPAdmin();showToast('Cadastro atualizado e sincronizado.');
+    }catch(e){console.error(e);alert('A alteração ficou salva neste iPhone, mas não foi sincronizada.\n\n'+e.message)}
+  };
+}
+
+(function taReplaceGuestFormV5(){
+  const old=document.getElementById('guestManagerForm');if(!old)return;
+  const fresh=old.cloneNode(true);old.parentNode.replaceChild(fresh,old);
+  const sel=fresh.querySelector('#gmCompanions');if(sel)sel.addEventListener('change',renderGMCompanionFields);
+  renderGMCompanionFields();
+  fresh.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=document.getElementById('gmName').value.trim();
+    const maxCompanions=Number(document.getElementById('gmCompanions').value||0);
+    const companionNames=[...document.querySelectorAll('#gmCompanionNames input')].map(x=>x.value.trim()).filter(Boolean).slice(0,maxCompanions);
+    if(!name)return;
+    if(guestRegistry.some(g=>g.name.toLowerCase()===name.toLowerCase())){showToast('Esse convidado já está cadastrado.');return}
+    const guest={id:guestId(),name,maxCompanions,companionNames,createdAt:new Date().toISOString()};
+    guestRegistry.push(guest);localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));renderGuestManager();
+    try{
+      await taGuestUpsert(guest);
+      fresh.reset();renderGMCompanionFields();renderGuestManager();showToast('Convidado adicionado e sincronizado.');
+    }catch(err){
+      console.error(err);
+      alert('O convidado foi salvo neste iPhone, mas ainda não está online.\n\n'+err.message);
+    }
+  });
+})();
+
+async function pushLocalToCloud(){
+  try{
+    const key=await ensureCloudAdminKey();if(!key)throw new Error('Informe a chave administrativa.');
+    cloudStatus('Sincronizando convidados...');
+    for(const g of guestRegistry)await taGuestUpsert(g);
+    cloudStatus('Convidados sincronizados com o Google.','ok');
+    showToast('Sincronização concluída.');renderGuestManager();
+  }catch(e){console.error(e);cloudStatus(e.message,'err');alert('Não foi possível sincronizar os convidados.\n\n'+e.message)}
+}
+</script>
+
+
+<script id="v51-delete-guest-fix">
+// ===== V5.1 — exclusão robusta de convite (GitHub Pages / Safari) =====
+async function deleteGuestInvite(g){
+  if(!g||!window.__TA_ADMIN_MODE)return;
+  if(!confirm('Excluir definitivamente o convite de '+g.name+'?\n\nO convidado e a confirmação vinculada também serão apagados.'))return;
+
+  try{
+    if(!cloudApiUrl)cloudApiUrl=DEFAULT_CLOUD_API_URL;
+    const key=await ensureCloudAdminKey();
+    if(!key)throw new Error('Informe a chave administrativa do painel.');
+
+    cloudAdminKey=key;
+    localStorage.setItem(CLOUD_URL_KEY,cloudApiUrl);
+    localStorage.setItem('ta_anderson_cloud_admin_key',key);
+    sessionStorage.setItem('ta_anderson_cloud_admin_key',key);
+    cloudStatus('Localizando convite no Google...');
+
+    // Lê o cadastro online primeiro. Isso corrige convites cujo ID local ficou diferente do ID salvo no Google.
+    const before=await cloudGet('admin',{key:key});
+    const remoteGuests=Array.isArray(before&&before.guests)?before.guests:[];
+    const norm=s=>String(s||'').trim().toLocaleLowerCase('pt-BR');
+    const online=remoteGuests.find(x=>String(x.id||'')===String(g.id||'')) ||
+                 remoteGuests.find(x=>norm(x.name)===norm(g.name));
+
+    const remoteId=String((online&&online.id)||g.id||'').trim();
+    if(!remoteId)throw new Error('Não foi possível identificar este convite no Google.');
+
+    cloudStatus('Excluindo convite...');
+    const result=await cloudGet('guestDelete',{key:key,guestId:remoteId});
+    if(!result||result.ok===false)throw new Error((result&&result.error)||'O Google não confirmou a exclusão.');
+
+    // Confirma que realmente saiu antes de apagar a cópia do iPhone.
+    await new Promise(r=>setTimeout(r,300));
+    const after=await cloudGet('admin',{key:key});
+    const stillThere=(Array.isArray(after&&after.guests)?after.guests:[]).some(x=>
+      String(x.id||'')===remoteId || norm(x.name)===norm(g.name)
+    );
+    if(stillThere)throw new Error('O convite ainda aparece no Google. Tente novamente em alguns segundos.');
+
+    guestRegistry=guestRegistry.filter(x=>String(x.id||'')!==String(g.id||'') && norm(x.name)!==norm(g.name));
+    localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
+    localStorage.removeItem('rsvp_'+g.name);
+
+    renderGuestManager();
+    renderRSVPAdmin();
+    renderCurrentRSVPStatus();
+    cloudStatus('Convite excluído do Google.','ok');
+    showToast('Convite excluído com sucesso.');
+  }catch(e){
+    console.error(e);
+    cloudStatus('Falha ao excluir convite.','err');
+    alert('Não foi possível excluir o convite.\n\n'+(e&&e.message?e.message:e));
+  }
+}
+</script>
+
 </body>
 </html>
