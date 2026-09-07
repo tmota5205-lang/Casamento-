@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tainá & Anderson — Painel dos noivos</title>
+<title>Tainá & Anderson — Convite & RSVP</title>
 <script>
-window.__TA_ADMIN_MODE=true;window.__TA_PHOTO_MODE=false;
+const __taParams=new URLSearchParams(location.search);
+if(__taParams.get('admin')==='1'){location.replace('admin.html');}
+else if(__taParams.get('fotos')==='1'||__taParams.get('album')==='1'){location.replace('./');}
+window.__TA_ADMIN_MODE=false;window.__TA_PHOTO_MODE=false;
 window.__TA_PUBLIC_SITE_URL=new URL('./', location.href).toString();
-document.documentElement.classList.add('admin-mode');
+document.documentElement.classList.add('guest-mode');
 </script>
 <style>
 :root{--green:#596344;--dark:#454d35;--cream:#fbf8f1;--sage:#e8eadf;--blush:#d7aaa0;--text:#424535;--white:#fffdf9}
@@ -425,6 +428,8 @@ html.photo-mode footer.album-footer .names{font-size:10px!important}
 }
 </style>
 
+<meta name="ta-build" content="sem-fotos-2026-09-07">
+<meta name="ta-build" content="botao-confirmar-2026-09-07-1430">
 <meta name="ta-build" content="github-pages-compacto-2026-09-07">
 </head>
 <body>
@@ -451,7 +456,7 @@ html.photo-mode footer.album-footer .names{font-size:10px!important}
 <section class="section alt" id="rsvp"><div class="wrap"><div class="eyebrow">Seu convite</div><h2>Confirme sua presença</h2><div class="card">
 <p id="rsvpIntro">Queremos muito celebrar esse dia ao seu lado. Clique abaixo para confirmar sua presença.</p>
 <div class="rsvp-personal" id="rsvpPersonal"></div>
-<button class="btn" id="rsvpMainButton" onclick="openRSVP()">Confirmar presença</button>
+<button class="btn" type="button" id="rsvpMainButton" onclick="openRSVP()">Confirmar presença</button>
 <div class="status" id="status"></div>
 <div class="rsvp-deadline" id="rsvpDeadlineText">Após confirmar, sua resposta será enviada aos noivos e não poderá ser alterada.</div>
 </div>
@@ -574,64 +579,6 @@ html.photo-mode footer.album-footer .names{font-size:10px!important}
 </div></div>
 </section>
 
-<section class="section" id="fotos"><div class="wrap">
-  <div class="photo-invite-teaser">
-    <div class="eyebrow">ÁLBUM DO CASAMENTO</div>
-    <h2>Compartilhe esse momento com a gente</h2>
-    <p class="intro" style="font-size:15px">No dia do casamento — ou a qualquer momento depois — você pode enviar as fotos que registrou e deixar uma mensagem para nós.</p>
-    <div class="qr-box">
-      <img class="real-qr" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAewAAAHsAQAAAAA4UaPNAAAC6UlEQVR4nO2dUY7cIBBEq6P84xvs/Y+1N4ATVD5ooMFWpGQsT8iUNbIYL0+spXJt025YI144yo9XaEC4cOHChQsXLly4cOE34NaPA/0MwA7YgdpYut04unDhb8AT6xF/VoXNbxuyX7v9G7+8cOF/hQ/3TgTADBQDYF+sDea5262jCxf+FP7zfInFCCDRUja48lkMKd89unDhz+MXmjfAUkbVOQCA5ajmf/fowoU/jw/Nd02zHEPfxeBu7xdn6W9978I/E8c6dU383Sd0I8m89b0L/0zcfT66N4uxGOq5h/enbneMLlz483jz+cSalvGLefg/ydh2t5fPC98VH5Jm7kpGfwT8HMQ/UdK88P1wDMFXhSdWk0dw+9qhXwfk88L/Bzwaey08QKs98AqERDPrj8O9owsX/hQ+4vnpYp4+Huokxv7yeeF74kHzyZU8RfXtK3qok0fVjTQvfEN8jtj7XDWP2WuP5JdHQ5oXvic+Z2OC7NEyk8sc1oMcxTbCd8VH3saVn6Y8/OTteUakeeFb4lPQshzo+ZkQ6k/hjTQvfD98rqsshzdSNoDlqClLtjqEXpBw0+jChT+PT6UF6FnK5X3rUnig97DCN8avVJ1GfjJW1/QcZmhvfe/CPxO/iOeBmJlBz1silN/I54Vvi891lS0/MyXnT29pAdXbCN8XX9cGshjb8hBrBfNxCZVPb+8ZXbjw53HEeGbkJ4PtL8l5QPG88K3xdZ0UAUs0wBJRV0v5pgesC8NNPi98b/xqPewoFUZvr7avOazwXfEWz7e9a/oLJ7avFiawhG93c9PowoW/E48blNkXcdq7D8XMDIn8tjP+4ujChT+FX+zpVD2/y9rameVgOeo2COZ/F7a+d+GfiV/t3TcUblXndSbr4k8Mwc3W9y78M/GLfcxQDrf6RCR6PF8OLzlTPC98b7xpPii5T1qrz/vFZv7zTq1b37vwz8TtVFXwJ4f+h5pw4cKFCxcuXLhw4e/EfwGZw9x49LH/ZgAAAABJRU5ErkJggg==" alt="QR Code para abrir o álbum e enviar fotos">
-      <div><h3 class="qr-title">Nosso álbum, pelos olhos de quem amamos</h3><p style="font:12px Arial,sans-serif;color:#777;line-height:1.7">Aponte a câmera do celular para o QR Code. Você será levado direto para a página do álbum, onde pode escolher uma ou várias fotos da galeria, tirar uma nova foto, escrever seu nome e deixar uma mensagem.</p></div>
-      <div class="qr-steps">♡ Escolha fotos da sua galeria<br>◷ Envie quando quiser, inclusive depois da festa<br>✎ Adicione seu nome e uma mensagem<br>➤ As fotos vão para o álbum dos noivos</div>
-    </div>
-    <div class="photo-hub-actions"><a class="btn" id="openPhotoHub" href="album.html">Abrir álbum e enviar fotos</a></div>
-  </div>
-
-  <div class="photo-upload-page">
-    <div class="photo-page-brand">
-      <div class="mini">TAINÁ &amp; ANDERSON · NOSSO ÁLBUM</div>
-      <h1>Compartilhe suas<br>memórias</h1>
-      <p>Escolha fotos que você tirou no casamento — agora ou depois. Elas podem estar na sua galeria ou você pode tirar uma nova foto. Cada registro ajuda a contar esse dia pelos olhos de quem esteve com a gente.</p>
-    </div>
-    <div style="text-align:center"><a class="photo-back" href="./">←&nbsp;&nbsp; Voltar ao convite</a></div>
-    <div class="photo-upload-card">
-      <form class="photo-form" id="photoForm">
-        <label>Seu nome</label>
-        <input id="photoName" maxlength="80" required placeholder="Digite seu nome">
-        <label>Sua mensagem <span class="optional">(opcional)</span></label>
-        <textarea id="photoMessage" maxlength="300" placeholder="Deixe uma mensagem para os noivos ♥"></textarea>
-        <label>Sua foto</label>
-        <div class="photo-source-box">
-          <label class="photo-source camera-source">
-            <span class="source-icon">▣</span><strong>Tirar foto</strong>
-            <input id="photoCamera" type="file" accept="image/*" capture="environment">
-          </label>
-          <span class="source-divider"></span>
-          <label class="photo-source gallery-source">
-            <span class="source-icon">▧</span><strong>Escolher da galeria</strong>
-            <input id="photoGallery" type="file" accept="image/*" multiple>
-          </label>
-          <div class="photo-selected" id="photoSelected">Toque para selecionar uma foto</div>
-        </div>
-        <button type="submit" id="photoSubmitButton"><span class="send-icon">➤</span> Enviar foto para os noivos</button>
-        <div class="photo-progress" id="photoProgress"></div>
-        <div class="photo-success" id="photoSuccess">♥ Foto enviada! Ela ficará aguardando a aprovação dos noivos antes de aparecer no álbum.</div>
-        <div class="album-privacy-note"><span>▣</span><p>No celular, você pode tirar uma foto agora ou escolher da sua galeria.<br>Sua foto será enviada e aparecerá no álbum online depois da aprovação dos noivos. Obrigado por compartilhar esse momento com a gente! ♥</p></div>
-      </form>
-    </div>
-    <div class="album photo-page-album" id="album" style="display:none" aria-hidden="true">
-      <div class="album-head"><h3>Álbum dos convidados</h3><span class="photo-badge" id="photoCount">0 fotos</span></div>
-      <div class="gallery" id="gallery"></div>
-    </div>
-  </div>
-
-  <details class="admin">
-    <summary>PAINEL DE APROVAÇÃO · TAINÁ &amp; ANDERSON</summary>
-    <p class="photo-note">As fotos enviadas ficam no Google Drive e só aparecem no álbum depois da aprovação.</p>
-    <div class="pending-list" id="pendingList"></div>
-  </details>
-</div></section>
-
 <section class="section presentes" id="presentes"><div class="wrap">
   <div class="eyebrow">COM CARINHO</div><h2>Lista de presentes</h2>
   <div class="present-card"><p id="giftMessage">Nossa lista de presentes estará disponível em breve. Assim que estiver definida, colocaremos aqui o acesso para você escolher com carinho.</p><span class="soon-pill" id="giftSoon">EM BREVE</span><a class="btn present-link" id="giftLink" target="_blank" rel="noopener">Acessar lista de presentes</a></div>
@@ -730,7 +677,24 @@ applyWeddingSettings();
 function countdown(){let x=Math.max(0,target-Date.now());document.getElementById("d").textContent=Math.floor(x/86400000);document.getElementById("h").textContent=Math.floor(x%86400000/3600000);document.getElementById("m").textContent=Math.floor(x%3600000/60000);document.getElementById("s").textContent=Math.floor(x%60000/1000)} countdown();setInterval(countdown,1000);
 
 let attending=null;
-function openRSVP(){
+async function openRSVP(){
+ // Em links individuais, o botão deve funcionar mesmo se os dados do convidado
+ // ainda estiverem chegando do Google. Tentamos carregar o convite uma vez antes.
+ if(guestName==='Convidado(a)' && inviteId && cloudApiUrl){
+   try{
+     const data=await cloudGet('invite',{invite:inviteId});
+     if(data&&data.guest){
+       guestName=data.guest.name||guestName;
+       const guestEl=document.getElementById('guest');if(guestEl)guestEl.textContent=guestName;
+       const mainGuestEl=document.getElementById('mainGuest');if(mainGuestEl)mainGuestEl.textContent=guestName;
+       const found=guestRegistry.find(g=>g.id===data.guest.id);
+       if(found)Object.assign(found,data.guest);else guestRegistry.push(data.guest);
+       localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
+       if(data.rsvp)localStorage.setItem('rsvp_'+guestName,JSON.stringify(data.rsvp));
+       renderPersonalInvite();syncCompanionOptions();
+     }
+   }catch(e){console.warn('Convite será aberto usando o identificador do link.',e)}
+ }
  const existing=responseFor(guestName);
  if(existing&&!window.__TA_ADMIN_MODE){showToast('Sua resposta já foi enviada aos noivos.');return}
  document.getElementById("modal").classList.add("open");document.getElementById("form").style.display="block";document.getElementById("success").style.display="none";attending=null;document.getElementById("companions").style.display="none";document.getElementById("yes").classList.remove("selected");document.getElementById("no").classList.remove("selected")
@@ -927,7 +891,14 @@ const gmForm=document.getElementById('guestManagerForm');
 if(gmForm)gmForm.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('gmName').value.trim();const maxCompanions=Number(document.getElementById('gmCompanions').value||0);const companionNames=[...document.querySelectorAll('#gmCompanionNames input')].map(x=>x.value.trim()).filter(Boolean).slice(0,maxCompanions);if(!name)return;if(guestRegistry.some(g=>g.name.toLowerCase()===name.toLowerCase())){showToast('Esse convidado já está cadastrado.');return}guestRegistry.push({id:guestId(),name,maxCompanions,companionNames,createdAt:new Date().toISOString()});saveGuestRegistry();e.target.reset();renderGMCompanionFields();renderGuestManager();showToast('Convidado adicionado.')});
 function renderPersonalInvite(){
  const el=document.getElementById('rsvpPersonal'), btn=document.getElementById('rsvpMainButton');if(!el||!btn)return;
- if(guestName==='Convidado(a)'){el.textContent='';btn.style.display=window.__TA_ADMIN_MODE?'inline-block':'none';return}
+ // Um link individual (?convite=ID) sempre mostra o botão de confirmação.
+ // Antes, ele era escondido enquanto o nome ainda não tinha sido carregado do Google.
+ if(guestName==='Convidado(a)'){
+   el.textContent=inviteId?'Seu convite está pronto para confirmação.':'';
+   btn.style.display=(inviteId||window.__TA_ADMIN_MODE)?'inline-block':'none';
+   btn.textContent='Confirmar presença';
+   return;
+ }
  el.textContent='Convite reservado para '+guestName+'.';
  const r=responseFor(guestName);
  if(r&&!window.__TA_ADMIN_MODE){btn.style.display='none';}
@@ -1100,160 +1071,70 @@ function generateGuestLink(){
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== Correção GitHub Pages: sincronização segura de convidados =====
-function taNormalizeName(v){return String(v||'').trim().toLowerCase()}
-function taCompanionNames(rec){
+// ===== Correção GitHub Pages: convite individual + acompanhantes =====
+function taPublicCompanionNames(rec){
   const raw=rec&&Array.isArray(rec.companionNames)?rec.companionNames:[];
   return raw.map(x=>String(x||'').trim()).filter(Boolean);
 }
-function taSameGuestData(a,b){
-  if(!a||!b)return false;
-  const ac=taCompanionNames(a),bc=taCompanionNames(b);
-  return String(a.id||'')===String(b.id||'') && taNormalizeName(a.name)===taNormalizeName(b.name) && Number(a.maxCompanions||0)===Number(b.maxCompanions||0) && JSON.stringify(ac)===JSON.stringify(bc);
-}
-function taMergeGuests(remoteGuests,localGuests){
-  const out=(Array.isArray(remoteGuests)?remoteGuests:[]).map(g=>({...g,companionNames:taCompanionNames(g)}));
-  (Array.isArray(localGuests)?localGuests:[]).forEach(local=>{
-    let i=out.findIndex(r=>String(r.id||'')===String(local.id||''));
-    if(i<0)i=out.findIndex(r=>taNormalizeName(r.name)===taNormalizeName(local.name));
-    if(i>=0){
-      const remote=out[i];
-      // Mantém o id que já existe online quando o mesmo nome já estava cadastrado.
-      local.id=String(remote.id||local.id||'');
-      out[i]={...remote,...local,id:local.id,companionNames:taCompanionNames(local)};
-    }else out.push({...local,companionNames:taCompanionNames(local)});
-  });
-  return out;
-}
-async function taSyncGuestsVerified(checkGuest){
-  if(!cloudApiUrl)cloudApiUrl=DEFAULT_CLOUD_API_URL;
-  const key=await ensureCloudAdminKey();
-  if(!key)throw new Error('Informe a chave administrativa do painel para sincronizar os convidados.');
-  cloudAdminKey=key;
-  localStorage.setItem(CLOUD_URL_KEY,cloudApiUrl);
-  localStorage.setItem('ta_anderson_cloud_admin_key',key);
-  sessionStorage.setItem('ta_anderson_cloud_admin_key',key);
-  cloudStatus('Conferindo dados online...');
-  // Primeiro lê o que já existe para não apagar convidados cadastrados anteriormente.
-  const before=await cloudGet('admin',{key});
-  guestRegistry=taMergeGuests(before.guests||[],guestRegistry);
-  localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
-  cloudStatus('Sincronizando convidados...');
-  await cloudPost('guestSync',{guests:guestRegistry},true);
-  await new Promise(r=>setTimeout(r,900));
-  const after=await cloudGet('admin',{key});
-  const remote=Array.isArray(after.guests)?after.guests:[];
-  if(checkGuest){
-    const local=guestRegistry.find(g=>String(g.id)===String(checkGuest.id)) || guestRegistry.find(g=>taNormalizeName(g.name)===taNormalizeName(checkGuest.name));
-    const online=local && (remote.find(g=>String(g.id)===String(local.id)) || remote.find(g=>taNormalizeName(g.name)===taNormalizeName(local.name)));
-    if(!local||!online||!taSameGuestData(local,online))throw new Error('O convidado ainda não apareceu corretamente no Google. Tente sincronizar novamente.');
-  }
-  cloudReady=true;
-  cloudStatus('Google conectado. Convidados sincronizados.','ok');
-  return after;
-}
-async function taEnsureGuestOnline(g){
-  if(!g||!g.id)throw new Error('Convite sem identificação.');
+async function loadCloudInvite(){
+  if(!inviteId||!cloudApiUrl)return false;
+  const personal=document.getElementById('rsvpPersonal'),btn=document.getElementById('rsvpMainButton');
   try{
-    const current=await cloudGet('invite',{invite:g.id});
-    if(current&&current.guest&&taSameGuestData(g,current.guest))return current.guest;
-  }catch(_){ }
-  await taSyncGuestsVerified(g);
-  const checked=await cloudGet('invite',{invite:g.id});
-  if(!checked||!checked.guest)throw new Error('O convite ainda não está disponível online.');
-  return checked.guest;
-}
-async function copyInviteLink(name,id){
-  const g=guestRegistry.find(x=>String(x.id)===String(id))||guestRegistry.find(x=>taNormalizeName(x.name)===taNormalizeName(name));
-  try{
-    if(g)await taEnsureGuestOnline(g);
-    const url=inviteURL(g?g.name:name,g?g.id:id);
-    try{await navigator.clipboard.writeText(url);showToast('Link do convite copiado.')}catch(_){prompt('Copie o link do convite:',url)}
-  }catch(e){
-    console.error(e);
-    alert('Antes de enviar este convite, precisamos sincronizá-lo com o Google.\n\n'+e.message+'\n\nO link não foi copiado para evitar enviar um convite quebrado.');
-  }
-}
-async function taOpenWhatsAppInvite(g){
-  try{
-    await taEnsureGuestOnline(g);
-    const text='Olá, '+g.name+'! 🤍 Tainá e Anderson convidam você para celebrar conosco. Acesse seu convite e confirme sua presença: '+inviteURL(g.name,g.id);
-    window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener');
-  }catch(e){
-    console.error(e);
-    alert('Antes de abrir o WhatsApp, precisamos sincronizar este convidado com o Google.\n\n'+e.message+'\n\nO link não foi enviado.');
-  }
-}
-function renderGuestManager(){
-  const list=document.getElementById('gmList');if(!list)return;
-  const answered=guestRegistry.filter(g=>responseFor(g.name));
-  document.getElementById('gmTotal').textContent=guestRegistry.length;
-  document.getElementById('gmAnswered').textContent=answered.length;
-  document.getElementById('gmPending').textContent=Math.max(0,guestRegistry.length-answered.length);
-  const q=(document.getElementById('gmSearch')?.value||'').trim().toLowerCase();
-  const visible=guestRegistry.filter(g=>!q||g.name.toLowerCase().includes(q));
-  list.innerHTML='';
-  if(!visible.length){list.innerHTML='<div class="gm-empty">Nenhum convidado encontrado.</div>';return}
-  [...visible].sort((a,b)=>a.name.localeCompare(b.name,'pt-BR')).forEach(g=>{
-    const r=responseFor(g.name);let cls='pending',text='Aguardando resposta';
-    if(r){cls=r.attending?'ok':'no';text=r.attending?'Confirmado':'Não comparece'}
-    const row=document.createElement('div');row.className='gm-item';
-    const cn=companionNamesForGuest(g);const companionLabel=cn.length?cn.map(safeText).join(' · '):(Number(g.maxCompanions||0)?'Até '+Number(g.maxCompanions||0)+' acompanhante(s)':'Sem acompanhante');
-    row.innerHTML='<div class="gm-name"><b>'+safeText(g.name)+'</b><small class="companion-list">'+companionLabel+'</small></div><div class="gm-status '+cls+'">'+text+'</div><div><small style="font:10px Arial,sans-serif;color:#777">'+(r?formatRSVPDate(r.date):'Sem resposta')+'</small></div><div class="gm-actions"><button class="gm-btn edit" type="button">Editar</button><button class="gm-btn link" type="button">Copiar link</button><button class="gm-btn whatsapp" type="button">WhatsApp</button><button class="gm-btn danger" type="button">Excluir convite</button></div>';
-    row.querySelector('.link').onclick=()=>copyInviteLink(g.name,g.id);
-    row.querySelector('.whatsapp').onclick=()=>taOpenWhatsAppInvite(g);
-    row.querySelector('.edit').onclick=()=>editGuestInline(row,g);
-    row.querySelector('.danger').onclick=()=>deleteGuestInvite(g);
-    list.appendChild(row);
-  });
-}
-function editGuestInline(row,g){
-  const oldName=g.name;const existingNames=companionNamesForGuest(g).join(', ');
-  row.innerHTML='<div class="gm-edit"><input class="edit-name" maxlength="80" value="'+safeText(g.name)+'"><select class="edit-max">'+[0,1,2,3,4].map(n=>'<option value="'+n+'" '+(Number(g.maxCompanions||0)===n?'selected':'')+'>'+n+' acompanhante(s)</option>').join('')+'</select><input class="edit-companion-names" maxlength="240" placeholder="Nomes dos acompanhantes separados por vírgula" value="'+safeText(existingNames)+'"><button class="gm-btn save">Salvar</button></div>';
-  row.querySelector('.save').onclick=async()=>{
-    const name=row.querySelector('.edit-name').value.trim(),maxCompanions=Number(row.querySelector('.edit-max').value);
-    const companionNames=row.querySelector('.edit-companion-names').value.split(',').map(x=>x.trim()).filter(Boolean).slice(0,maxCompanions);
-    if(!name)return;
-    if(guestRegistry.some(x=>x.id!==g.id&&x.name.toLowerCase()===name.toLowerCase())){showToast('Já existe um convidado com esse nome.');return}
-    const resp=responseFor(oldName);if(resp&&oldName!==name){localStorage.removeItem('rsvp_'+oldName);resp.guest=name;localStorage.setItem('rsvp_'+name,JSON.stringify(resp))}
-    g.name=name;g.maxCompanions=maxCompanions;g.companionNames=companionNames;
+    if(personal&&guestName==='Convidado(a)')personal.textContent='Carregando seu convite...';
+    if(btn&&guestName==='Convidado(a)'){btn.disabled=true;btn.textContent='Carregando...';btn.style.display='inline-block'}
+    const data=await cloudGet('invite',{invite:inviteId});
+    if(!data||!data.guest)throw new Error('Convite não encontrado.');
+    cloudReady=true;
+    guestName=data.guest.name||guestName;
+    const normalized={...data.guest,companionNames:taPublicCompanionNames(data.guest)};
+    document.getElementById('guest').textContent=guestName;
+    document.getElementById('mainGuest').textContent=guestName;
+    const found=guestRegistry.find(g=>String(g.id)===String(normalized.id));
+    if(found)Object.assign(found,normalized);else guestRegistry.push(normalized);
     localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));
-    renderGuestManager();renderRSVPAdmin();renderPersonalInvite();
-    try{await taSyncGuestsVerified(g);renderGuestManager();showToast('Cadastro atualizado e sincronizado.')}catch(e){console.error(e);alert('A alteração ficou salva neste iPhone, mas ainda não foi sincronizada com o Google.\n\n'+e.message+'\n\nNão envie o link deste convidado até concluir a sincronização.')}
-  };
+    if(data.rsvp)localStorage.setItem('rsvp_'+guestName,JSON.stringify(data.rsvp));
+    syncCompanionOptions();renderPersonalInvite();renderCurrentRSVPStatus();
+    if(btn)btn.disabled=false;
+    return true;
+  }catch(e){
+    console.warn(e);
+    if(personal)personal.textContent='Este convite ainda não foi sincronizado pelos noivos.';
+    if(btn){btn.style.display='inline-block';btn.disabled=false;btn.textContent='Tentar carregar convite'}
+    return false;
+  }
 }
-async function pushLocalToCloud(){
-  try{
-    if(weddingSettings)await cloudPost('settings',{settings:weddingSettings},true).catch(()=>{});
-    await taSyncGuestsVerified();
-    showToast('Convidados sincronizados com o Google.');
-    renderGuestManager();
-  }catch(e){console.error(e);cloudStatus(e.message,'err');alert('Não foi possível sincronizar os convidados.\n\n'+e.message)}
-}
-(function taReplaceGuestForm(){
-  const old=document.getElementById('guestManagerForm');if(!old)return;
-  const fresh=old.cloneNode(true);old.parentNode.replaceChild(fresh,old);
-  const sel=fresh.querySelector('#gmCompanions');if(sel)sel.addEventListener('change',renderGMCompanionFields);
-  renderGMCompanionFields();
-  fresh.addEventListener('submit',async e=>{
-    e.preventDefault();
-    const name=document.getElementById('gmName').value.trim();
-    const maxCompanions=Number(document.getElementById('gmCompanions').value||0);
-    const companionNames=[...document.querySelectorAll('#gmCompanionNames input')].map(x=>x.value.trim()).filter(Boolean).slice(0,maxCompanions);
-    if(!name)return;
-    if(guestRegistry.some(g=>g.name.toLowerCase()===name.toLowerCase())){showToast('Esse convidado já está cadastrado.');return}
-    const guest={id:guestId(),name,maxCompanions,companionNames,createdAt:new Date().toISOString()};
-    guestRegistry.push(guest);localStorage.setItem(GUESTS_KEY,JSON.stringify(guestRegistry));renderGuestManager();
-    try{
-      await taSyncGuestsVerified(guest);
-      fresh.reset();renderGMCompanionFields();renderGuestManager();showToast('Convidado adicionado e sincronizado.');
-    }catch(err){
-      console.error(err);
-      alert('O convidado foi salvo neste iPhone, mas ainda não está online.\n\n'+err.message+'\n\nInforme a chave administrativa e sincronize antes de enviar o link.');
+async function openRSVP(){
+  if(inviteId){
+    const loaded=currentInviteRecord()||await loadCloudInvite();
+    if(!loaded||guestName==='Convidado(a)'){
+      alert('Este convite ainda não está disponível online. Peça aos noivos para sincronizar o cadastro e enviar um novo link.');
+      return;
     }
-  });
-  renderGuestManager();
-})();
+  }
+  const existing=responseFor(guestName);
+  if(existing&&!window.__TA_ADMIN_MODE){showToast('Sua resposta já foi enviada aos noivos.');return}
+  syncCompanionOptions();
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('form').style.display='block';
+  document.getElementById('success').style.display='none';
+  attending=null;
+  document.getElementById('companions').style.display='none';
+  document.getElementById('yes').classList.remove('selected');
+  document.getElementById('no').classList.remove('selected');
+}
+async function cloudSubmitRSVP(record){
+  if(!record.guestId){showToast('Este convite não tem identificação.');return false}
+  if(!cloudApiUrl){showToast('Conexão online indisponível.');return false}
+  try{
+    // Confere o convite antes de gravar, evitando a mensagem genérica de falha.
+    const invite=await cloudGet('invite',{invite:record.guestId});
+    if(!invite||!invite.guest)throw new Error('Este convite ainda não foi sincronizado pelos noivos.');
+    const data=await cloudGet('rsvp',{guestId:record.guestId,attending:String(record.attending===true),companions:Number(record.companions)||0,companionNames:JSON.stringify(record.companionNames||[])});
+    if(!data||data.ok===false)throw new Error((data&&data.error)||'Não foi possível registrar a resposta.');
+    cloudReady=true;showToast('Confirmação enviada aos noivos.');return true;
+  }catch(e){console.error(e);showToast(e.message||'Não foi possível enviar. Tente novamente.');return false}
+}
+setTimeout(()=>{if(inviteId)loadCloudInvite()},150);
 
 </script>
 </body>
